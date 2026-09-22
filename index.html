@@ -426,7 +426,7 @@
 
       document.getElementById('areaSections').innerHTML = areas.map(area => {
         const cards = area.skills.map(skill => {
-          const personCards = team.map(person => {
+          const rows = team.map(person => {
             const e = entry(area.id, skill, person);
             const current = area.interestOnly ? e.interest : e.rating;
             const interestValue = e.interest || 0;
@@ -447,30 +447,10 @@
             `;
           }).join('');
 
-          return `<div class="area-skill">${personCards}</div>`;
+          return `<div class="area" id="${area.id}"><div class="area-title"><span class="area-icon">${area.icon}</span><h2>${area.title}</h2><div class="progress" style="flex:1;max-width:220px"><i style="width:${Math.min(100, (team.length ? team.reduce((done, p) => done + ((area.interestOnly ? entry(area.id, skill, p).interest : entry(area.id, skill, p).rating) > 0 ? 1 : 0), 0) : 0) / team.length * 100)}%"></i></div></div><div class="skill-grid">${cards}</div></div>`;
         }).join('');
 
-        const progressValue = area.skills.reduce((done, skill) => {
-          const count = team.reduce((sum, person) => {
-            const e = entry(area.id, skill, person);
-            const value = area.interestOnly ? e.interest : e.rating;
-            return sum + (value > 0 ? 1 : 0);
-          }, 0);
-          return done + count;
-        }, 0);
-
-        const filled = area.skills.length * team.length ? (progressValue / (area.skills.length * team.length)) * 100 : 0;
-
-        return `
-          <div class="area" id="${area.id}">
-            <div class="area-title">
-              <span class="area-icon">${area.icon}</span>
-              <h2>${area.title}</h2>
-              <div class="progress" style="flex:1;max-width:220px"><i style="width:${filled}%"></i></div>
-            </div>
-            <div class="skill-grid">${cards}</div>
-          </div>
-        `;
+        return area.id === 'interests' ? `<div class="area" id="${area.id}">...</div>` : '';
       }).join('');
 
       bindDynamicEvents();
